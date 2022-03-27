@@ -199,6 +199,16 @@ define letsencrypt::certonly (
       }
     }
 
+    'dns-gandi': {
+      require letsencrypt::plugin::dns_gandi
+      $_domains = join($domains, '\' -d \'')
+      $plugin_args  = [
+        '--authenticator dns-gandi',
+        '--dns-gandi-credentials /etc/letsencrypt/gandi.ini',
+        "--cert-name '${cert_name}' -d '${_domains}'",
+      ]
+    }
+
     default: {
       if $ensure == 'present' {
         $_domains = join($domains, '\' -d \'')
