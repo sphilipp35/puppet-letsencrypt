@@ -9,6 +9,7 @@
 # @param config_dir The path to the configuration directory.
 #
 class letsencrypt::plugin::dns_gandi (
+  String[1] $package_name,
   String[1] $api_key,
   Stdlib::Absolutepath $config_dir = $letsencrypt::config_dir,
   Boolean $manage_package          = true,
