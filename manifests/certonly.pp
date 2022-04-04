@@ -205,7 +205,7 @@ define letsencrypt::certonly (
         $plugin_args  = [
           '--authenticator dns-gandi',
           '--dns-gandi-credentials /etc/letsencrypt/gandi.ini',
-          "-d '${_domains}'",
+          "--cert-name '${cert_name}' -d '${_domains}'",
         ]
     }
 

@@ -26,13 +26,14 @@ class letsencrypt::plugin::dns_gandi (
   }
 
 # New post-prefix configuration for certbot>=1.7.0
-  $python_packages_name = [
-    'git',
-    'python3-pip',
-    'python3-dev'
+  if $python_packages {
+
+    $python_packages_name = [
+      'git',
+      'python3-pip',
+      'python3-dev'
     ]
 
-  if $python_packages {
     package { 
       $python_packages_name:
         ensure => installed;
