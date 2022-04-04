@@ -11,14 +11,34 @@
 class letsencrypt::plugin::dns_gandi (
   String[1] $package_name,
   String[1] $api_key,
-  Stdlib::Absolutepath $config_dir = $letsencrypt::config_dir,
-  Boolean $manage_package          = true,
+  Stdlib::Absolutepath $config_dir      = $letsencrypt::config_dir,
+  Boolean $manage_package               = false,
+  Boolean $python_packages              = true,
+  String[1] $plugin_pip3_version        = '1.3.2'
 ) {
   require letsencrypt
 
+# old Legacy prefix-based
   if $manage_package {
     package { $package_name:
       ensure => installed,
+    }
+  }
+
+# New post-prefix configuration for certbot>=1.7.0
+  $python_packages_name = [
+    'git',
+    'python3-pip',
+    'python3-dev'
+    ]
+
+  if $python_packages {
+    package { 
+      $python_packages_name:
+        ensure => installed;
+      'certbot-plugin-gandi':
+        ensure   => $plugin_pip3_version,
+        provider => 'pip3',
     }
   }
 
