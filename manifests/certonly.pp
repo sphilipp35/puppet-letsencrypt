@@ -201,10 +201,11 @@ define letsencrypt::certonly (
 
     'dns-gandi': {
       require letsencrypt::plugin::dns_gandi
-        $_domains = join($domains, '\' -d \'')
+        $_domains     = join($domains, '\' -d \'')
+        $domain_cert  = $letsencrypt::plugin::dns_gandi::domain_cert
         $plugin_args  = [
           '--authenticator dns-gandi',
-          '--dns-gandi-credentials /etc/letsencrypt/gandi.ini',
+          "--dns-gandi-credentials /etc/letsencrypt/gandi_${domain_cert}.ini",
           "--cert-name '${cert_name}' -d '${_domains}'",
         ]
     }
