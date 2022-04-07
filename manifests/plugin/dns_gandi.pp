@@ -9,12 +9,15 @@
 # @param config_dir The path to the configuration directory.
 #
 class letsencrypt::plugin::dns_gandi (
-  String[1] $package_name,
-  String[1] $api_key,
-  Stdlib::Absolutepath $config_dir      = $letsencrypt::config_dir,
-  Boolean $manage_package               = false,
-  Boolean $python_packages              = true,
-  String[1] $plugin_pip3_version        = '1.3.2'
+  String[1]            $package_name,
+  String[1]            $api_key,
+  Stdlib::Absolutepath $config_dir          = $letsencrypt::config_dir,
+  Boolean              $manage_package      = false,
+  Boolean              $python_packages     = true,
+  String[1]            $plugin_pip3_version = '1.3.2',
+  String               $domain_cert         = 'genouest',
+  String[1]            $api_key_genouest
+  String[1]            $api_key_askomics
 ) {
   require letsencrypt
 
@@ -43,17 +46,29 @@ class letsencrypt::plugin::dns_gandi (
     }
   }
 
-  $ini_vars = {
-    dns_gandi_api_key    => $api_key,
+  case $domain_cert {
+    'askomics': {
+      file { "${config_dir}/gandi_${domain_cert}.ini":
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0400',
+        content => "dns_gandi_api_key=${api_key_askomics}",
+        require => File['/etc/letsencrypt'],
+      }
+    }
+    default: {
+      file { "${config_dir}/gandi_${domain_cert}.ini":
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0400',
+        content => "dns_gandi_api_key=${api_key_genouest}",
+        require => File['/etc/letsencrypt'],
+        }
+    }
   }
 
-  file { "${config_dir}/gandi.ini":
-    ensure  => file,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0400',
-    content => epp('letsencrypt/ini.epp', {
-        vars => { '' => $ini_vars },
-    }),
-  }
+
+
 }
